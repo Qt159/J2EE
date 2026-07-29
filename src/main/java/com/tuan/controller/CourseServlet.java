@@ -1,5 +1,6 @@
 package com.tuan.controller;
 
+import com.tuan.dto.CourseSearchRequestDTO;
 import com.tuan.model.CourseBean;
 import com.tuan.service.CourseService;
 
@@ -27,7 +28,8 @@ public class CourseServlet extends HttpServlet {
         }
 
         if ("search".equals(action)) {
-            String keyword = request.getParameter("keyword");
+            CourseSearchRequestDTO dto = new CourseSearchRequestDTO(request.getParameter("keyword"));
+            String keyword = dto.getKeyword();
             List<CourseBean> result = courseService.searchCourses(keyword);
             request.setAttribute("courseList", result);
             request.setAttribute("keyword", keyword);

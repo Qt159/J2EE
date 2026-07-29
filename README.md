@@ -8,6 +8,9 @@ Hệ thống cho phép sinh viên nhập thông tin cá nhân, tìm kiếm học
 
 Dự án được xây dựng nhằm áp dụng kiến thức lập trình web với J2EE sử dụng mô hình Servlet/JSP, quản lý session và xử lý dữ liệu phía server.
 
+### Demo Online
+Application URL:
+[http://13.228.75.59:8080/23110056_PhamQuocTuan_J2EE_FinalProject-1.0-SNAPSHOT/](http://13.228.75.59:8080/23110056_PhamQuocTuan_J2EE_FinalProject-1.0-SNAPSHOT/)
 ## 2. Công nghệ sử dụng
 
 ### Backend
@@ -23,8 +26,14 @@ Dự án được xây dựng nhằm áp dụng kiến thức lập trình web v
 - Git / GitHub
 
 ### Deployment
-- AWS(Amazon Web Services) EC2 instance
-- VPC, Subnet, Security Group, Key Pair, Route Table, Internet Gateway
+- AWS EC2 Instance
+- VPC
+- Public Subnet
+- Internet Gateway
+- Route Table
+- Security Group
+- Key Pair
+
 ## 3. Chức năng chính
 
 ### Quản lý thông tin sinh viên
@@ -68,22 +77,31 @@ Dự án được xây dựng nhằm áp dụng kiến thức lập trình web v
     - Tổng học phí
 
 ### Giao diện
+
 - Hỗ trợ Dark Mode
-- Thiết kế theo phong cách Academic SaaS
 - Sử dụng Session để lưu trạng thái người dùng
 
 ## 4. Luồng hoạt động của hệ thống
 ![SystemFlow](images/SystemFlowDiagram.drawio.png)
-## 5. Quản lý Session
+## 5. Quản lý Session và Cookie
 Hệ thống sử dụng HttpSession để lưu trữ dữ liệu trong quá trình đăng ký.
 
 Các dữ liệu được lưu trong Session:
 
-| Attribute | Mục đích |
-|---|---|
-| student | Lưu thông tin sinh viên |
-| cart | Lưu danh sách học phần đang chọn |
+| Attribute    | Mục đích                               |
+|--------------|----------------------------------------|
+| student      | Lưu thông tin sinh viên                |
+| cart         | Lưu danh sách học phần đang chọn       |
 | registration | Lưu thông tin đăng ký sau khi xác nhận |
+| theme        | Lưu chế độ giao diện                   |
+| cartVisit    | Lưu số lần truy cập giỏ đăng ký        |
+
+Ngoài HttpSession, hệ thống sử dụng Cookie để lưu một số thông tin người dùng nhằm cải thiện trải nghiệm.
+
+| Cookie | Mục đích |
+|---|---|
+| mssv | Lưu mã số sinh viên |
+| major | Lưu ngành học |
 | theme | Lưu chế độ giao diện |
 
 ## 6. Kiến trúc xử lý
@@ -91,11 +109,24 @@ Các dữ liệu được lưu trong Session:
 
 ### Controller
 Xử lý request từ người dùng:
+
 - StudentServlet
 - CourseServlet
 - CartServlet
 - ConfirmServlet
 - ExportServlet
+
+### DTO
+Đóng gói dữ liệu nhận từ request:
+- StudentRequestDTO
+- CourseSearchRequestDTO
+- CartRequestDTO
+### Service
+Xử lý nghiệp vụ:
+- CourseService
+### Mapper
+Chuyển đổi dữ liệu:
+- StudentMapper
 
 ### Model
 Các Java Bean đại diện dữ liệu:
@@ -126,11 +157,30 @@ Các trang JSP:
 mvn clean package
 ```
 Sau khi build thành công:
+
+```text
 target/
 └── 23110056_PhamQuocTuan_J2EE_FinalProject-1.0-SNAPSHOT.war
-Copy file WAR vào thư mục: apache-tomcat/webapps/
-Khởi động Tomcat: bin/startup.sh
+```
+
+Copy file WAR vào thư mục:
+
+```bash
+apache-tomcat/webapps/
+```
+
+Khởi động Tomcat:
+
+```bash
+bin/startup.sh
+```
+
+Truy cập:
+
+```text
 http://localhost:8080/23110056_PhamQuocTuan_J2EE_FinalProject-1.0-SNAPSHOT/
+```
+
 
 ## 8. Deployment
 ![Infra](images/Infrastructure.drawio.png)
@@ -140,7 +190,16 @@ http://localhost:8080/23110056_PhamQuocTuan_J2EE_FinalProject-1.0-SNAPSHOT/
 User
  |
  v
+Internet
+ |
+ v
 Internet Gateway
+ |
+ v
+Route Table
+ |
+ v
+Security Group
  |
  v
 EC2 Instance
@@ -163,22 +222,63 @@ J2EE Application (.war)
 
 
 ## 9. Cấu trúc dự án
-src
-└── main
-├── java
-│   └── com.tuan
-│       ├── controller
-│       ├── dto
-│       ├── error
-│       ├── mapper
-│       ├── model
-│       ├── service
-│       └── util
-│
-└── webapp
-    ├── views
-    ├── includes
-    ├── css
 
+```text
+23110056_PhamQuocTuan_J2EE_FinalProject
+│
+├── src
+│   └── main
+│       ├── java
+│       │   └── com.tuan
+│       │       ├── controller
+│       │       │   ├── StudentServlet.java
+│       │       │   ├── CourseServlet.java
+│       │       │   ├── CartServlet.java
+│       │       │   ├── ConfirmServlet.java
+│       │       │   └── ExportServlet.java
+│       │       │
+│       │       ├── dto
+│       │       │   ├── CartRequestDTO.java
+│       │       │   ├── CourseSearchRequestDTO.java
+│       │       │   └── StudentRequestDTO.java
+│       │       ├── model
+│       │       │   ├── StudentBean.java
+│       │       │   ├── CourseBean.java
+│       │       │   └── RegistrationBean.java
+│       │       │
+│       │       ├── service
+│       │       │   └── CourseService.java
+│       │       ├── mapper
+│       │       │   └── StudentMapper.java
+│       │       ├── error
+│       │       │   └── ErrorMessages.java
+│       │       └── util
+│       │       │   ├── HtmlUtils.java
+│       │       │   └── ValidationUtils.java
+│       │
+│       └── webapp
+│           ├── views
+│           │   ├── cart.jsp
+│           │   ├── confirmation.jsp
+│           │   ├── course-list.jsp
+│           │   └── error.jsp
+│           │   ├── search-result.jsp
+│           │   └── student-form.jsp
+│           │
+│           ├── includes
+│           │   ├── header.jsp
+│           │   ├── menu.jsp
+│           │   └── footer.jsp
+│           │
+│           ├── css
+│           │   └── style.css
+│
+├── pom.xml
+├── README.md
+└── images
+    ├── SystemFlowDiagram.drawio.png
+    ├── SystemArchitectureDiagram.drawio.png
+    └── Infrastructure.drawio.png
+```
 ## 10. Thành viên thực hiện
 Phạm Quốc Tuấn

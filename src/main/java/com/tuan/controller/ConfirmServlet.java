@@ -19,7 +19,7 @@ import static com.tuan.service.CourseService.courseList;
 
 @WebServlet("/confirm")
 public class ConfirmServlet extends HttpServlet {
-    private static int registrationCode = 0;
+    private static int registrationCode = 1;
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

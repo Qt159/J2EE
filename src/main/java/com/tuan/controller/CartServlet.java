@@ -1,5 +1,6 @@
 package com.tuan.controller;
 
+import com.tuan.dto.CartRequestDTO;
 import com.tuan.error.ErrorMessages;
 import com.tuan.model.CourseBean;
 import com.tuan.service.CourseService;
@@ -28,11 +29,11 @@ public class CartServlet extends HttpServlet {
             session.setAttribute("cart", cart);
         }
         String action = request.getParameter("action");
+        CartRequestDTO dto = new CartRequestDTO(request.getParameter("courseId"));
         if (action != null) {
             switch (action) {
                 case "add":
-                    String courseId = request.getParameter("courseId");
-                    CourseBean course = courseService.getCourseById(courseId);
+                    CourseBean course = courseService.getCourseById(dto.getCourseId());
                     if (course != null) {
                         if (!cart.contains(course)) {
                             cart.add(course);
@@ -42,8 +43,7 @@ public class CartServlet extends HttpServlet {
                     }
                     break;
                 case "remove":
-                    String removeId = request.getParameter("courseId");
-                    CourseBean removeCourse = courseService.getCourseById(removeId);
+                    CourseBean removeCourse = courseService.getCourseById(dto.getCourseId());
                     if (removeCourse != null) {
                         cart.remove(removeCourse);
                     }
