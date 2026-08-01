@@ -11,6 +11,7 @@
     <div class="alert alert-success">
         Hệ thống đã ghi nhận thông tin đăng ký học phần của bạn. Mã đăng ký chính thức: <strong>#${registration.registrationCode}</strong>
     </div>
+    <p><strong>Ngày giờ xác nhận:</strong> <fmt:formatDate value="${registration.confirmationDate}" pattern="dd/MM/yyyy HH:mm:ss"/></p>
 
     <h3>Thông tin sinh viên</h3>
     <p><strong>MSSV:</strong> ${registration.student.mssv}</p>
