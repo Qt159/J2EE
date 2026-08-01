@@ -10,7 +10,8 @@ Dự án được xây dựng nhằm áp dụng kiến thức lập trình web v
 
 ### Demo Online
 Application URL:
-[http://13.228.75.59:8080/23110056_PhamQuocTuan_J2EE_FinalProject-1.0-SNAPSHOT/](http://13.228.75.59:8080/23110056_PhamQuocTuan_J2EE_FinalProject-1.0-SNAPSHOT/)
+[http://54.255.197.227:8080/23110056_PhamQuocTuan_J2EE_FinalProject-1.0-SNAPSHOT/](http://54.255.197.227:8080/23110056_PhamQuocTuan_J2EE_FinalProject-1.0-SNAPSHOT/)
+
 ## 2. Công nghệ sử dụng
 
 ### Backend
@@ -53,12 +54,15 @@ Application URL:
     - Tên học phần
 
 ### Giỏ đăng ký học phần
-- Thêm học phần vào danh sách đăng ký
-- Xóa học phần khỏi giỏ
+- Thêm học phần vào danh sách đăng ký (không cho phép thêm trùng)
+- Xóa từng học phần khỏi giỏ
+- Làm trống toàn bộ giỏ đăng ký
+- Hủy phiên đăng ký (`session.invalidate()`) — xóa toàn bộ dữ liệu phiên
 - Tính toán:
     - Tổng số học phần
     - Tổng số tín chỉ
-    - Tổng học phí
+    - Tổng học phí dự kiến
+- Hiển thị thông tin kỹ thuật session: Session ID, thời điểm tạo session, số lần truy cập trang giỏ
 
 ### Xác nhận đăng ký
 - Kiểm tra thông tin sinh viên
@@ -83,7 +87,20 @@ Application URL:
 
 ## 4. Luồng hoạt động của hệ thống
 ![SystemFlow](images/SystemFlowDiagram.drawio.png)
-## 5. Quản lý Session và Cookie
+
+## 5. Lý do lựa chọn hình thức JSP Include
+
+Dự án sử dụng **`<%@ include file="..." %>`** (Static Include) cho tất cả các thành phần dùng chung (`header.jsp`, `menu.jsp`, `footer.jsp`).
+
+**Lý do lựa chọn Static Include:**
+- `<%@ include %>` được xử lý tại **compile time** — nội dung file được nhúng trực tiếp vào trang JSP thành một Servlet duy nhất, giúp hiệu năng tốt hơn vì không cần thêm request/response cycle.
+- Các thành phần `header`, `menu`, `footer` có nội dung **tĩnh, không thay đổi theo từng request**, nên không cần dynamic include.
+- Tiêu đề trang (`pageTitle`) được truyền qua `<c:set var="pageTitle" scope="request">` trước khi include, thay thế cho `jsp:param` — cách này hoạt động được với static include vì cùng chung scope.
+
+**Khi nào dùng `<jsp:include>`:**  
+`<jsp:include>` phù hợp hơn khi component cần nhận tham số động qua `<jsp:param>` hoặc khi nội dung thay đổi theo từng request. Trong project này không có nhu cầu đó nên Static Include là lựa chọn phù hợp.
+
+## 6. Quản lý Session và Cookie
 Hệ thống sử dụng HttpSession để lưu trữ dữ liệu trong quá trình đăng ký.
 
 Các dữ liệu được lưu trong Session:
@@ -93,18 +110,19 @@ Các dữ liệu được lưu trong Session:
 | student      | Lưu thông tin sinh viên                |
 | cart         | Lưu danh sách học phần đang chọn       |
 | registration | Lưu thông tin đăng ký sau khi xác nhận |
-| theme        | Lưu chế độ giao diện                   |
 | cartVisit    | Lưu số lần truy cập giỏ đăng ký        |
 
-Ngoài HttpSession, hệ thống sử dụng Cookie để lưu một số thông tin người dùng nhằm cải thiện trải nghiệm.
+Ngoài HttpSession, hệ thống sử dụng Cookie để lưu một số thông tin người dùng nhằm cải thiện trải nghiệm khi quay lại trang.
 
 | Cookie | Mục đích |
 |---|---|
-| mssv | Lưu mã số sinh viên |
-| major | Lưu ngành học |
-| theme | Lưu chế độ giao diện |
+| mssv | Lưu mã số sinh viên để điền sẵn vào form |
+| major | Lưu ngành học để điền sẵn vào form |
+| theme | Lưu chế độ giao diện (sáng/tối) |
 
-## 6. Kiến trúc xử lý
+Người dùng có thể xóa toàn bộ cookie đã lưu bằng liên kết **"Xóa thông tin đã lưu"** trên trang nhập thông tin sinh viên. Hệ thống không lưu bất kỳ dữ liệu nhạy cảm nào (email, số điện thoại) vào cookie.
+
+## 7. Kiến trúc xử lý
 ![SystemArchitecture](images/SystemArchitectureDiagram.drawio.png)
 
 ### Controller
@@ -143,7 +161,7 @@ Các trang JSP:
 
 ---
 
-## 7. Cách chạy dự án
+## 8. Cách chạy dự án ở local (Windows)
 
 ### Yêu cầu môi trường
 
@@ -151,38 +169,66 @@ Các trang JSP:
 - Maven
 - Apache Tomcat 8.5+
 
-### Build project
+### 1. Clone project
+
+```bash
+git clone https://github.com/Qt159/J2EE
+cd J2EE
+```
+
+### 2. Build project
 
 ```bash
 mvn clean package
 ```
-Sau khi build thành công:
+
+Sau khi build thành công sẽ tạo file:
 
 ```text
 target/
 └── 23110056_PhamQuocTuan_J2EE_FinalProject-1.0-SNAPSHOT.war
 ```
 
+### 3. Deploy lên Tomcat
+
 Copy file WAR vào thư mục:
 
-```bash
-apache-tomcat/webapps/
+```text
+<TOMCAT_HOME>\webapps\
 ```
 
-Khởi động Tomcat:
+Ví dụ:
 
-```bash
-bin/startup.sh
+```text
+D:\apache-tomcat-8.5.43\apache-tomcat-8.5.43\webapps\
 ```
 
-Truy cập:
+### 4. Khởi động Tomcat
+
+Mở Command Prompt hoặc PowerShell:
+
+```powershell
+cd D:\apache-tomcat-8.5.43\apache-tomcat-8.5.43\bin
+.\startup.bat
+```
+### 5. Truy cập ứng dụng
 
 ```text
 http://localhost:8080/23110056_PhamQuocTuan_J2EE_FinalProject-1.0-SNAPSHOT/
 ```
+---
 
+## Chạy bằng IntelliJ IDEA
 
-## 8. Deployment
+1. Mở project.
+2. Build Project.
+3. Chạy Tomcat Configuration.
+4. Truy cập:
+
+```text
+http://localhost:8080/23110056_PhamQuocTuan_J2EE_FinalProject_war_exploded/
+```
+## 9. Deployment
 ![Infra](images/Infrastructure.drawio.png)
 
 ### Deployment Flow
@@ -221,7 +267,7 @@ J2EE Application (.war)
 
 
 
-## 9. Cấu trúc dự án
+## 10. Cấu trúc dự án
 
 ```text
 23110056_PhamQuocTuan_J2EE_FinalProject
@@ -280,5 +326,5 @@ J2EE Application (.war)
     ├── SystemArchitectureDiagram.drawio.png
     └── Infrastructure.drawio.png
 ```
-## 10. Thành viên thực hiện
+## 11. Thành viên thực hiện
 Phạm Quốc Tuấn

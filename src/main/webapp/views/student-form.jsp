@@ -8,6 +8,13 @@
     <h2>Thông Tin Cá Nhân Sinh Viên</h2>
     <p class="small-text" style="margin-bottom: 20px;">Vui lòng nhập đầy đủ và chính xác thông tin cá nhân trước khi tiến hành chọn học phần.</p>
 
+    <c:if test="${not empty mssv}">
+        <div style="margin-bottom: 16px; padding: 10px 14px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px;">
+            Thông tin đã lưu được điền sẵn từ cookie.
+            <a href="${pageContext.request.contextPath}/student?action=clearCookies" style="margin-left: 10px; color: var(--error);">Xóa thông tin đã lưu</a>
+        </div>
+    </c:if>
+
 
     </select>
     <form action="${pageContext.request.contextPath}/student" method="POST">

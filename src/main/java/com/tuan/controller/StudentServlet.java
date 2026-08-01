@@ -22,6 +22,21 @@ public class StudentServlet extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+
+        // Xóa cookie nếu có action=clearCookies
+        String action = request.getParameter("action");
+        if ("clearCookies".equals(action)) {
+            String[] cookieNames = {"mssv", "major", "theme"};
+            for (String name : cookieNames) {
+                Cookie c = new Cookie(name, "");
+                c.setMaxAge(0);
+                c.setPath("/");
+                response.addCookie(c);
+            }
+            response.sendRedirect(request.getContextPath() + "/student");
+            return;
+        }
+
         String theme = "light";
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -31,7 +46,7 @@ public class StudentServlet extends HttpServlet {
                 if ("major".equals(cookie.getName())) {
                     request.setAttribute("major", URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8));}
                 if ("theme".equals(cookie.getName())) {
-                    request.setAttribute("theme", URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8));}
+                    theme = URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);}
             }
         }
         request.setAttribute("theme", theme);

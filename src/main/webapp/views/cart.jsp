@@ -59,6 +59,13 @@
     <div class="session-info">
         <p><strong>Thông tin kỹ thuật Session:</strong></p>
         <p>Session ID: ${sessionId} | Lượt truy cập giỏ: ${visitCount} lần</p>
+        <p>Thời điểm tạo session: <fmt:formatDate value="${creationTime}" pattern="dd/MM/yyyy HH:mm:ss"/></p>
+        <a href="${pageContext.request.contextPath}/cart?action=invalidate"
+           class="btn btn-danger"
+           style="margin-top: 10px;"
+           onclick="return confirm('Hủy toàn bộ phiên đăng ký? Mọi dữ liệu sẽ bị xóa.');">
+            Hủy phiên đăng ký
+        </a>
     </div>
 </div>
 

@@ -51,6 +51,10 @@ public class CartServlet extends HttpServlet {
                 case "clear":
                     cart.clear();
                     break;
+                case "invalidate":
+                    session.invalidate();
+                    response.sendRedirect(request.getContextPath() + "/index.jsp");
+                    return;
             }
         }
         int totalCredits = 0;
@@ -72,7 +76,7 @@ public class CartServlet extends HttpServlet {
         request.setAttribute("totalCredits", totalCredits);
         request.setAttribute("totalFee", totalFee);
         request.setAttribute("sessionId", session.getId());
-        request.setAttribute("creationTime", session.getCreationTime());
+        request.setAttribute("creationTime", new java.util.Date(session.getCreationTime()));
         request.setAttribute("visitCount", visitCount);
         request.getRequestDispatcher("/views/cart.jsp").forward(request, response);
     }

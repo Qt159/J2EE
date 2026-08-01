@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="pageTitle" value="Kết quả tìm kiếm học phần" scope="request" />
 <%@ include file="/includes/header.jsp" %>
 <%@ include file="/includes/menu.jsp" %>
@@ -30,7 +31,7 @@
                         <td>${course.courseId}</td>
                         <td>${course.courseName}</td>
                         <td>${course.credits}</td>
-                        <td>${String.format("%,.0f", course.tuitionFee)} VNĐ</td>
+                        <td><fmt:formatNumber value="${course.tuitionFee}" type="number" groupingUsed="true"/> VNĐ</td>
                         <td>
                             <a href="${pageContext.request.contextPath}/cart?action=add&courseId=${course.courseId}" class="btn btn-primary" style="height: 32px; padding: 0 12px; font-size: 13px;">Đăng ký</a>
                         </td>
